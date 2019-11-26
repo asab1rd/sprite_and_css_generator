@@ -1,10 +1,12 @@
 #!/usr/bin/php
 <?php
-
+require_once("ladoc.php");
+require_once('css.class.php');
+require_once('image.class.php');
 $arguments = array_shift($argv);
 if (count($argv) < 2) {
-    # code...
-    print "Erreur";
+    print "Veuillez respecter la structure voici la doc :" . PHP_EOL;
+    print getDoc();
 } else {
     $aguments  =  array_shift($argv);
     $isRecursive = false;
@@ -23,7 +25,7 @@ if (count($argv) < 2) {
                 $outputStyle = $aguments[$key + 1];
                 break;
             default:
-                print "" . PHP_EOL;
+
                 break;
         }
     }

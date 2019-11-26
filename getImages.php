@@ -11,7 +11,6 @@ function getAllFiles($dir, $recursive = false, $array = array())
             if ($entry !== "." && $entry !== "..") {
                 $path = $dir . "/" . $entry;
                 if ($recursive && is_dir($path)) {
-                    print "Hello" . PHP_EOL;
                     $array = getAllFiles($path, true, $array);
                 } else if (is_file($path)) {
                     array_push($array, $path);
@@ -23,8 +22,6 @@ function getAllFiles($dir, $recursive = false, $array = array())
         $th->getMessage();
     }
 }
-
-var_dump(getAllFiles("test"));
 
 
 /**
