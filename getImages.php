@@ -1,43 +1,20 @@
 <?php
 
 /**
- * @return array of all files in current directory
- */
-function getFiles($dir)
-{
-    $array = array();
-    try {
-        if ($handle = opendir($dir)) {
-            while (false !== ($entry = readdir($handle))) {
-                if (is_file($entry)) {
-                    array_push($array);
-                }
-            }
-        }
-    } catch (\Throwable $th) {
-        $th->getMessage();
-    }
-    return $array;
-}
-
-
-
-
-/**
  * @return array of all files in current directory & sub-directories
  */
-function getAllFiles($dir, $array = array())
+function getAllFiles($dir, $recursive = false, $array = array())
 {
     try {
         $handle = opendir($dir);
         while ($entry = readdir($handle)) {
             if ($entry !== "." && $entry !== "..") {
-                if (is_dir($dir . "/" . $entry)) {
+                $path = $dir . "/" . $entry;
+                if ($recursive && is_dir($path)) {
                     print "Hello" . PHP_EOL;
-                    $array = getAllFiles($dir . "/" . $entry, $array);
-                    # code...
-                } else {
-                    array_push($array, $dir . "/" . $entry);
+                    $array = getAllFiles($path, true, $array);
+                } else if (is_file($path)) {
+                    array_push($array, $path);
                 }
             }
         }

@@ -1,26 +1,30 @@
 #!/usr/bin/php
 <?php
 
-if (count($argv)) {
+$arguments = array_shift($argv);
+if (count($argv) < 2) {
     # code...
     print "Erreur";
-} elseif (condition) {
-    # code...
+} else {
     $aguments  =  array_shift($argv);
-}
-
-if (condition) {
-    # code...
-}
-foreach ($arguments as $key => $arg) {
-    # code...
-    switch ($arg) {
-        case '-r':
-
-            break;
-
-        default:
-            # code...
-            break;
+    $isRecursive = false;
+    $outputName = "sprite.png";
+    $outputStyle = "style.css";
+    foreach ($arguments as $key => $arg) {
+        # code...
+        switch ($arg) {
+            case '-r' or '--recursive':
+                $isRecursive = true;
+                break;
+            case '-i' or '--output-image':
+                $outputName = $aguments[$key + 1];
+                break;
+            case '-s' or '--output-style':
+                $outputStyle = $aguments[$key + 1];
+                break;
+            default:
+                print "" . PHP_EOL;
+                break;
+        }
     }
 }
