@@ -3,29 +3,74 @@
 require_once("ladoc.php");
 require_once('css.class.php');
 require_once('image.class.php');
-$arguments = array_shift($argv);
 if (count($argv) < 2) {
-    print "Veuillez respecter la structure voici la doc :" . PHP_EOL;
-    print getDoc();
+    print "Veuillez respecter la structure svp voici la doc :" . PHP_EOL . getDoc();
 } else {
-    $aguments  =  array_shift($argv);
-    $isRecursive = false;
-    $outputName = "sprite.png";
-    $outputStyle = "style.css";
-    foreach ($arguments as $key => $arg) {
+    array_shift($argv);
+    $folderPath = end($argv);
+    is_dir($folderPath) ? cssGenerator($argv) : print "Veuillez respecter la structure svp voici la doc : " . PHP_EOL . getDoc();
+}
+function cssGenerator(array $arguments)
+{
+    foreach ($arguments as $arg) {
         # code...
         switch ($arg) {
-            case '-r' or '--recursive':
+            case '-r':
+                print "I AM RECURSIVE";
+                continue;
                 $isRecursive = true;
                 break;
-            case '-i' or '--output-image':
-                $outputName = $aguments[$key + 1];
+            case '--recursive':
+                print "I AM RECURSIVE";
+                continue;
+                $isRecursive = true;
                 break;
-            case '-s' or '--output-style':
-                $outputStyle = $aguments[$key + 1];
-                break;
+            case '-i':
+                try {
+                    print "I HAVE -i";
+                    $outputName = $arguments[$key + 1];
+                    break;
+                } catch (\Throwable $th) {
+                    //throw $th;
+                    //if he didnt give the name
+                    $th->getMessage();
+                    print getDoc();
+                }
+            case '--output-image':
+                try {
+                    print "I HAVE -i";
+                    $outputName = $arguments[$key + 1];
+                    break;
+                } catch (\Throwable $th) {
+                    //throw $th;
+                    //if he didnt give the name
+                    $th->getMessage();
+                    print getDoc();
+                }
+            case '-s':
+                try {
+                    print "I AM -S";
+                    $outputStyle = $arguments[$key + 1];
+                    break;
+                } catch (\Throwable $th) {
+                    //throw $th;
+                    $th->getMessage();
+                    print getDoc();
+                }
+            case '--output-style':
+                try {
+                    print "I AM -S";
+                    $outputStyle = $arguments[$key + 1];
+                    break;
+                } catch (\Throwable $th) {
+                    //throw $th;
+                    $th->getMessage();
+                    print getDoc();
+                }
             default:
-
+                $isRecursive = false;
+                $outputName = "sprite.png";
+                $outputStyle = "style.css";
                 break;
         }
     }

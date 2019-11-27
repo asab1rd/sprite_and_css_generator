@@ -2,8 +2,8 @@
 
 function getDoc()
 {
-    $doc = "
-    CSS_GENERATOR(1) UserCommands CSS_GENERATOR(1)
+
+    $doc = "CSS_GENERATOR(1)        UserCommands         CSS_GENERATOR(1)
         NAME
             SYNOPSIS
             css_generator [OPTIONS]. . . assets_folder
