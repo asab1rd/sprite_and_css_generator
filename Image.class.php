@@ -2,7 +2,7 @@
 require_once('getImages.php');
 class SpriteCreator
 {
-    private $width, $height, $filename, $cssFilename;
+    private $width, $height, $filename, $cssFilename, $htmlFilename = "index.html";
     protected $arrayOfImages = array();
     public function __construct(array $images, $filename = "sprite.png", $cssFilename = "style.css")
     {
@@ -75,25 +75,32 @@ class SpriteCreator
             imagefill($mySprite, 0, 0, $alpha);
             $pointer = 0; // The actual position of the pointer is when the next image should start.
             $images = $this->arrayOfImages;
-            /**
-             * CSS BUILDER
-             */
-            $cssFile = fopen($this->cssFilename, 'w'); //the CSS File
+
             $cssToWrite = "";
             $i = 0;
+            $allDivs = "";
             foreach ($images as $image) {
-                $cssClassName = "image" . ++$i; //Css class identifiers
                 list($width, $height) = getimagesize($image);
                 $pngImage = imagecreatefrompng($image);
                 imagecopy($mySprite, $pngImage, $pointer, 0, 0, 0, $width, $height);
-                $cssToWrite .= $this->createCSS($cssClassName, $width, $height, $image, $pointer);
+                $htmlClassName = "image" . ++$i; //html class identifiers
+                $cssToWrite .= $this->createCSS($htmlClassName, $width, $height, $pointer);
+                $allDivs .= $this->createDiv($htmlClassName);
                 $pointer += $width;
             }
+            $htmlToWrite = $this->createHTML($allDivs);
+            /**
+             * CSS & HTML BUILDER
+             */
+            $cssFile = fopen($this->cssFilename, 'w'); //the CSS File
+            $htmlFile = fopen($this->htmlFilename, 'w'); //html file
             fwrite($cssFile, $cssToWrite);
-            //END
+            fwrite($htmlFile, $htmlToWrite);
+            //END CSS  HTML BUILDER
             imagepng($mySprite, $this->filename);
             imagedestroy($mySprite);
             fclose($cssFile);
+            fclose($htmlFile);
 
             return true;
         } catch (\Throwable $th) {
@@ -101,13 +108,12 @@ class SpriteCreator
             return false;
         }
     }
-    public function createCSS($name, $width, $height, $imgUrl, $backgroundStart)
+    public function createCSS($name, $width, $height, $backgroundStart)
     {
-        print("$name, $width, $height, $imgUrl, $backgroundStart");
         $name = "." . $name;
         $width = "width : $width" . "px;";
         $height = "height : $height" . "px;";
-        $backgroundImage = "background-image: url(" . $this->filename . ") -$backgroundStart px;";
+        $backgroundImage = "background: url(" . $this->filename . ") -$backgroundStart" . "px 0;";
         $cssProprieties = "$name{
                             $width
                             $height
@@ -116,8 +122,27 @@ class SpriteCreator
 
         return $cssProprieties . PHP_EOL;
     }
-}
 
-// $images = getAllFiles("test", true);
-// $sprite = new SpriteCreator($images);
-// var_dump($sprite->createSpriteAndCSS());
+    public function createDiv($divClass)
+    {
+        return "<div class=\"$divClass\"></div><br>" . PHP_EOL;
+    }
+    public function createHTML($allDivs)
+    {
+        $html = "<!DOCTYPE html>
+        <html lang=\"en\">
+        <head>
+            <meta charset=\"UTF-8\">
+            <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">
+            <meta http-equiv=\"X-UA-Compatible\" content=\"ie=edge\">
+            <title>Document</title>
+            <link rel=\"stylesheet\" href=\"$this->cssFilename\">
+        </head>
+        <body>
+            $allDivs
+        </body>
+        </html>
+        ";
+        return $html;
+    }
+}

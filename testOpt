@@ -1,0 +1,25 @@
+#!/usr/bin/php
+<?php
+
+// Script example.php
+function getOptions($args)
+{
+    $shortopts = "";
+    $shortopts .= "i:";
+    $shortopts .= "s:";
+    $shortopts .= "p:";
+    $shortopts .= "o:";
+    $shortopts .= "c:";
+    $shortopts .= "rh";
+
+    $longopts = array(
+        "output-image:",
+        "output-style:",
+        "padding:",
+        "override-size:",
+        "columns_number:",
+        "recursive",
+        "help"
+    );
+    return getopt($shortopts, $longopts);
+}

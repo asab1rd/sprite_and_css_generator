@@ -1,77 +1,27 @@
 #!/usr/bin/php
 <?php
+require_once("getArgs.php");
 require_once("ladoc.php");
 require_once('css.class.php');
 require_once('image.class.php');
+
+// S'il n'y a pas d'arguments
 if (count($argv) < 2) {
-    print "Veuillez respecter la structure svp voici la doc :" . PHP_EOL . getDoc();
-} else {
-    array_shift($argv);
-    $folderPath = end($argv);
-    is_dir($folderPath) ? cssGenerator($argv) : print "Veuillez respecter la structure svp voici la doc : " . PHP_EOL . getDoc();
+    print "Pour la documentation veuillez utiliser -h ou --help." . PHP_EOL;
+    die;
 }
-function cssGenerator(array $arguments)
-{
-    foreach ($arguments as $arg) {
-        # code...
-        switch ($arg) {
-            case '-r':
-                print "I AM RECURSIVE";
-                continue;
-                $isRecursive = true;
-                break;
-            case '--recursive':
-                print "I AM RECURSIVE";
-                continue;
-                $isRecursive = true;
-                break;
-            case '-i':
-                try {
-                    print "I HAVE -i";
-                    $outputName = $arguments[$key + 1];
-                    break;
-                } catch (\Throwable $th) {
-                    //throw $th;
-                    //if he didnt give the name
-                    $th->getMessage();
-                    print getDoc();
-                }
-            case '--output-image':
-                try {
-                    print "I HAVE -i";
-                    $outputName = $arguments[$key + 1];
-                    break;
-                } catch (\Throwable $th) {
-                    //throw $th;
-                    //if he didnt give the name
-                    $th->getMessage();
-                    print getDoc();
-                }
-            case '-s':
-                try {
-                    print "I AM -S";
-                    $outputStyle = $arguments[$key + 1];
-                    break;
-                } catch (\Throwable $th) {
-                    //throw $th;
-                    $th->getMessage();
-                    print getDoc();
-                }
-            case '--output-style':
-                try {
-                    print "I AM -S";
-                    $outputStyle = $arguments[$key + 1];
-                    break;
-                } catch (\Throwable $th) {
-                    //throw $th;
-                    $th->getMessage();
-                    print getDoc();
-                }
-            default:
-                $isRecursive = false;
-                $outputName = "sprite.png";
-                $outputStyle = "style.css";
-                break;
-        }
-    }
-}
+
+array_shift($argv);
+$folderPath = end($argv);
+list(
+    $isRecursive,
+    $imageName,
+    $styleName,
+    $isPadding,
+    $isOverride,
+    $columnNumbers
+) = getArgs($folderPath);
+
+$images = getAllFiles($folderPath, $isRecursive);
+$sprite = new SpriteCreator($images, $imageName, $styleName);
+var_dump($sprite->createSpriteAndCSS());
