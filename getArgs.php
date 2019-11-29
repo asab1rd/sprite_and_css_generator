@@ -43,6 +43,7 @@ function getArgs($folderPath)
         die;
     }
 }
+
 function getOptions()
 {
     $shortopts = "";
