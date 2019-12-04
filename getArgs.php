@@ -1,5 +1,10 @@
 <?php
 
+
+/**
+ * @return array based that contains all values that we need
+                -isRecursive, stylename, imageNale, isPadding, isOverrude, columnNumbers
+ */
 function getArgs($folderPath)
 {
     $options = getOptions();
@@ -43,6 +48,10 @@ function getArgs($folderPath)
         die;
     }
 }
+
+/**
+ * @return array with all option passed in arguments
+ */
 
 function getOptions()
 {
