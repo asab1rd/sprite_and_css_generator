@@ -24,4 +24,3 @@ list(
 
 $images = getAllFiles($folderPath, $isRecursive);
 $sprite = new SpriteCreator($images, $imageName, $styleName);
-var_dump($sprite->createSpriteAndCSS());
