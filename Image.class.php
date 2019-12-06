@@ -28,7 +28,6 @@ class SpriteCreator
                 // Il faudrait checker si le fichier existe & Que c'est bien une image;
                 foreach ($images as $image) {
                     if (file_exists($image)) {
-
                         array_push($arrayOfHeights, getimagesize($image)[1]);
                         $width += getimagesize($image)[0];
                     }
@@ -108,6 +107,9 @@ class SpriteCreator
             return false;
         }
     }
+    /**
+     * @return CSS propriety with given name, height, and background start.
+     */
     public function createCSS($name, $width, $height, $backgroundStart)
     {
         $name = "." . $name;
@@ -123,10 +125,19 @@ class SpriteCreator
         return $cssProprieties . PHP_EOL;
     }
 
+    /**
+     * put the "divClass" on the div class
+     * @return HTML div
+     */
     public function createDiv($divClass)
     {
         return "<div class=\"$divClass\"></div><br>" . PHP_EOL;
     }
+
+    /**
+     * "allDivs" will be put in the body
+     * @return HTML page
+     */
     public function createHTML($allDivs)
     {
         $html = "<!DOCTYPE html>

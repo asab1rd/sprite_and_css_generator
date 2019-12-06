@@ -26,7 +26,7 @@ function getAllFiles($dir, $recursive = false, $array = array())
 
 /**
  * @return true if a file got the given extention given
- *
+ * This function will probably not be used in this project
  */
 function isImage(string $filename, string $ext = ".png")
 {
