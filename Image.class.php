@@ -104,12 +104,10 @@ class SpriteCreator
                 } else {
                     imagecopy($mySprite, $pngImage, $pointer, $pointerY, 0, 0, $width, $height);
                 }
-                print("pointeur x: $pointer, pointeur y : $pointerY , colcop: $columCopiedImageCount" . PHP_EOL);
                 $htmlClassName = "image" . ++$i; //html class identifiers
                 $cssToWrite .= $this->createCSS($htmlClassName, $width, $height, $pointer);
                 $allDivs .= $this->createDiv($htmlClassName);
                 if ($columCopiedImageCount == $this->isColumn) {
-                    print("HELOOOOOOO");
                     $pointerY += $this->maxHeight; // pointer
                     $pointer = 0;
                     $columCopiedImageCount = 0;
