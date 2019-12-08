@@ -3,22 +3,37 @@ require_once('getImages.php');
 class SpriteCreator
 {
     private $width, $height, $filename, $cssFilename, $htmlFilename = "index.html";
+    private $isPadding, $isOverride, $isColumn, $maxHeight;
     protected $arrayOfImages = array();
-    public function __construct(array $images, $filename = "sprite.png", $cssFilename = "style.css")
+    public function __construct(array $images, $filename = "sprite.png", $cssFilename = "style.css", $isOverride = false, $isPadding = 0, $isColumn = 0)
     {
-        list($width, $height) = $this->getDimension($images);
+        list($width, $height) = $this->getDimension($images, $isPadding);
+
+        if ($isOverride) {
+            $height = $isOverride;
+        }
+        $this->maxHeight = $height;
+        if ($isColumn != 0) {
+            $height = $height * (int) count($images) / $isColumn;
+            // $width = $width / (int) count($images) / $isColumn;
+        }
         $this->width = $width;
         $this->height = $height;
         $this->arrayOfImages = $images;
         $this->filename = $filename;
         $this->cssFilename = $cssFilename;
+        $this->isOverride = $isOverride;
+        $this->isPadding = $isPadding;
+        $this->isColumn = $isColumn;
     }
+    public function maxWidth()
+    { }
 
     /**
      * @return array index 0 => sum of all widths or (null if an error occurs) | index 1 => height of the highest image (null if an error occurs)
      * @return false
      */
-    private function getDimension(array $images)
+    private function getDimension(array $images, $isPadding)
     {
         $arrayOfHeights = array();
         $width = 0;
@@ -29,7 +44,7 @@ class SpriteCreator
                 foreach ($images as $image) {
                     if (file_exists($image)) {
                         array_push($arrayOfHeights, getimagesize($image)[1]);
-                        $width += getimagesize($image)[0];
+                        $width += getimagesize($image)[0] + $isPadding;
                     }
                 }
             } catch (\Throwable $th) {
@@ -38,8 +53,8 @@ class SpriteCreator
                 return $dimensions;
             }
         }
-
-        $height = max($arrayOfHeights); // La hauteur de l'image sera la hauteur maximale des images données
+        $height = max($arrayOfHeights);
+        // La hauteur de l'image sera la hauteur maximale des images données
         $dimensions = [$width, $height];
         return $dimensions;
     }
@@ -73,19 +88,35 @@ class SpriteCreator
             $alpha = imagecolorallocatealpha($mySprite, 0, 0, 0, 127);
             imagefill($mySprite, 0, 0, $alpha);
             $pointer = 0; // The actual position of the pointer is when the next image should start.
+            $pointerY = 0;
             $images = $this->arrayOfImages;
 
             $cssToWrite = "";
-            $i = 0;
+            $i = 0; //for imagename, csspropriety and htmlclassname
+
+            $columCopiedImageCount = 1; // column
             $allDivs = "";
             foreach ($images as $image) {
                 list($width, $height) = getimagesize($image);
                 $pngImage = imagecreatefrompng($image);
-                imagecopy($mySprite, $pngImage, $pointer, 0, 0, 0, $width, $height);
+                if ($this->isOverride) {
+                    imagecopyresized($mySprite, $pngImage, $pointer, $pointerY, 0, 0, $this->isOverride, $this->isOverride, $width, $height);
+                } else {
+                    imagecopy($mySprite, $pngImage, $pointer, $pointerY, 0, 0, $width, $height);
+                }
+                print("pointeur x: $pointer, pointeur y : $pointerY , colcop: $columCopiedImageCount" . PHP_EOL);
                 $htmlClassName = "image" . ++$i; //html class identifiers
                 $cssToWrite .= $this->createCSS($htmlClassName, $width, $height, $pointer);
                 $allDivs .= $this->createDiv($htmlClassName);
-                $pointer += $width;
+                if ($columCopiedImageCount == $this->isColumn) {
+                    print("HELOOOOOOO");
+                    $pointerY += $this->maxHeight; // pointer
+                    $pointer = 0;
+                    $columCopiedImageCount = 0;
+                } else {
+                    $pointer += $width + $this->isPadding;
+                }
+                $columCopiedImageCount++;
             }
             $htmlToWrite = $this->createHTML($allDivs);
             /**
